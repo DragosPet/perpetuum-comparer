@@ -94,6 +94,37 @@ class DataComparer:
             tablefmt="grid",
             showindex="always"
         ))
+    
+    def content_comparison(self) -> None:
+        log.info("Comparing data counts")
+        primary_count = self.primary_df.shape[0]
+        secondary_count = self.secondary_df.shape[0]
+        if primary_count == secondary_count : 
+            print(f"Data counts matches between datasets : {primary_count} recs !")
+        else : 
+            print(f"Data counts different between datasets : PRIMARY : {primary_count} VS SECONDARY : {secondary_count} !")
+        if self.structural_matches : 
+            filter_cols = [x[0] for x in self.structural_matches]
+            print(filter_cols)
+            subset_primary_df = self.primary_df[filter_cols]
+            subset_secondary_df = self.secondary_df[filter_cols]
+        
+        differences = []
+        for index, rec in subset_primary_df.iterrows() :
+            index_dict = {
+                "index": index,
+                "key_differences": []
+            }
+            compared_secondary_df = subset_secondary_df[subset_secondary_df[self.line_id] == subset_primary_df[self.line_id]]
+            compared_secondary_dict = compared_secondary_df.to_dict(orient="records")[index]
+            for key in filter_cols:
+                if rec[key] != compared_secondary_dict[key]:
+                    print(rec[key], compared_secondary_dict[key])
+                    index_dict["key_differences"].append(key)
+                    differences.append(index_dict)
+        print(differences)
+        return differences 
+
 
 if __name__ == "__main__":
     df1 = pd.DataFrame({
@@ -104,10 +135,14 @@ if __name__ == "__main__":
 
     df2 = pd.DataFrame({
         "col1": [1,2,3],
-        "col2": [3,5,6],
-        "col3": [8,1,3],
+        "col2": [3,7,6],
+        "col3": [6,1,3],
     },columns=["col1","col2","col3"])
+
+    print(df1)
+    print(df2)
 
     dc = DataComparer("test", df1, df2,"col1")
     matching_flag = dc.structural_comparison()
+    dc.content_comparison()
     dc.display_structural_comparison()
