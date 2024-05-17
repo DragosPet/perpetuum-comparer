@@ -28,7 +28,7 @@ def read_df_from_path(
     output_data = pd.DataFrame()
     if test_valid_path(input_path):
         log.info(f"Path {input_path} available. Reading data file.")
-        if input_path == "csv":
+        if input_format == "csv":
             output_data = pd.read_csv(input_path)
         else:
             log.error(

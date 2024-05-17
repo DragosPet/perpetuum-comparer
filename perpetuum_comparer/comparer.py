@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime
 from tabulate import tabulate
 from termcolor import colored
-from utils import logging_setup
+from perpetuum_comparer.utils import logging_setup
 
 log = logging_setup(logging.INFO)
 

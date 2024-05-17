@@ -12,6 +12,7 @@ python = "^3.8"
 pandas = "^2.0.2"
 tabulate = "^0.9.0"
 termcolor = "^2.4.0"
+ConfigArgParse = "^1.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
@@ -21,3 +22,6 @@ pylint = "^3.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+p-compare = "perpetuum_comparer.commander:main"
