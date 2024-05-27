@@ -142,74 +142,45 @@ class DataComparer:
 
     def generate_reports(self, differences_array: dict) -> "tuple[pd.DataFrame]":
         reports = []
+        export_reports = []
         if len(differences_array) > 0:
+            index = 0
             for entry in differences_array:
                 report_line = self.primary_df.iloc[[entry["index"]]].to_dict(
                     orient="records"
                 )[0]
+                export_line = self.primary_df.iloc[[entry["index"]]].to_dict(
+                    orient="records"
+                )[0]
                 for diff in entry["key_differences"]:
-                    report_line[diff] = (
-                        f"{report_line[diff]}/{colored(entry['secondary_val'][0],'red')}"
+                    if index < 20:
+                        report_line[diff] = (
+                            f"{report_line[diff]}/{colored(entry['secondary_val'][0],'red')}"
+                        )
+                    export_line[diff] = (
+                        f"{export_line[diff]}/{entry['secondary_val'][0]}"
                     )
+                index += 1
                 reports.append(report_line)
+                export_reports.append(export_line)
 
         diff_reports = pd.DataFrame(reports, columns=self.primary_df.columns)
+        diff_export_reports = pd.DataFrame(
+            export_reports, columns=self.primary_df.columns
+        )
         primary_exclusive_reports = pd.DataFrame(
             self.primary_df.iloc[self.exclusive_primary_indexes]
         )
         secondary_exclusive_reports = pd.DataFrame(
             self.secondary_df.iloc[self.exclusive_secondary_indexes]
         )
-        return (diff_reports, primary_exclusive_reports, secondary_exclusive_reports)
+        return (
+            diff_reports,
+            primary_exclusive_reports,
+            secondary_exclusive_reports,
+            diff_export_reports,
+        )
 
 
 if __name__ == "__main__":
-    df1 = pd.DataFrame(
-        {"col1": [1, 2, 3, 4], "col2": [3, 5, 6, 8], "col3": [8, 1, 3, 7]},
-        columns=["col1", "col2", "col3"],
-    )
-
-    df2 = pd.DataFrame(
-        {
-            "col1": [1, 2, 3, 5],
-            "col2": [3, 7, 6, 8],
-            "col3": [6, 1, 3, 2],
-            "col4": [7, 2, 4, 0],
-        },
-        columns=["col1", "col2", "col3", "col4"],
-    )
-
-    print(df1)
-    print(df2)
-
-    dc = DataComparer("test", df1, df2, "col1")
-    matching_flag = dc.structural_comparison()
-    diffs = dc.content_comparison()
-    print(dc.exclusive_primary_indexes, dc.exclusive_secondary_indexes)
-    dc.display_structural_comparison()
-    (common_diffs, primary_exclusive, secondary_exclusive) = dc.generate_reports(diffs)
-
-    print(
-        tabulate(
-            common_diffs,
-            headers=common_diffs.columns,
-            tablefmt="grid",
-            showindex="always",
-        )
-    )
-    print(
-        tabulate(
-            primary_exclusive,
-            headers=primary_exclusive.columns,
-            tablefmt="grid",
-            showindex="always",
-        )
-    )
-    print(
-        tabulate(
-            secondary_exclusive,
-            headers=secondary_exclusive.columns,
-            tablefmt="grid",
-            showindex="always",
-        )
-    )
+    pass
