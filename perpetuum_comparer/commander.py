@@ -38,6 +38,14 @@ parser.add(
 )
 
 parser.add(
+    "-sh",
+    "--show_details",
+    required=False,
+    default="N",
+    help="Show comparison details tabular data",
+)
+
+parser.add(
     "-ll",
     "--log_level",
     required=False,
@@ -53,6 +61,10 @@ def main():
     test_name = args.test_name
     line_id = args.line_id
     log_level = args.log_level
+    if args.show_details.upper() == "N":
+        show_details = False
+    else:
+        show_details = True
     if log_level == "info":
         ll = logging.INFO
     else:
@@ -87,6 +99,22 @@ def main():
                 dc.generate_reports(diffs)
             )
 
+            difference_count = (
+                common_diffs.shape[0]
+                + primary_exclusive.shape[0]
+                + secondary_exclusive.shape[0]
+            )
+            percentage_of_difference = (
+                round(difference_count / dc.primary_df.shape[0], 4) * 100
+            )
+
+            print(
+                f"There is a {percentage_of_difference} % difference between the 2 files."
+            )
+
+            if not show_details:
+                return None
+
             print(
                 tabulate(
                     common_diffs,
@@ -113,7 +141,6 @@ def main():
                     showindex="always",
                 )
             )
-            print(export_diffs)
     else:
         if len(dc.structural_matches) == 0:
             print(
@@ -134,6 +161,22 @@ def main():
                 (common_diffs, primary_exclusive, secondary_exclusive, export_diffs) = (
                     dc.generate_reports(diffs)
                 )
+
+                difference_count = (
+                    common_diffs.shape[0]
+                    + primary_exclusive.shape[0]
+                    + secondary_exclusive.shape[0]
+                )
+                percentage_of_difference = (
+                    round(difference_count / dc.primary_df.shape[0], 4) * 100
+                )
+
+                print(
+                    f"There is a {percentage_of_difference} % difference between the 2 files."
+                )
+
+                if not show_details:
+                    return None
 
                 print(
                     tabulate(
@@ -162,8 +205,6 @@ def main():
                         showindex="always",
                     )
                 )
-
-                print(export_diffs)
 
 
 if __name__ == "__main__":

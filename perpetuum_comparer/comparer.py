@@ -111,9 +111,9 @@ class DataComparer:
             )
         if self.structural_matches:
             filter_cols = [x[0] for x in self.structural_matches]
-            print(filter_cols)
-            subset_primary_df = self.primary_df[filter_cols]
-            subset_secondary_df = self.secondary_df[filter_cols]
+            # print(filter_cols)
+            subset_primary_df = self.primary_df[filter_cols].fillna("")
+            subset_secondary_df = self.secondary_df[filter_cols].fillna("")
 
         differences = []
         for index, rec in subset_primary_df.iterrows():
@@ -127,7 +127,7 @@ class DataComparer:
                 )[0]
                 for key in filter_cols:
                     if rec[key] != compared_secondary_dict[key]:
-                        print(rec[key], compared_secondary_dict[key])
+                        # print(rec[key], compared_secondary_dict[key])
                         index_dict["key_differences"].append(key)
                         index_dict["secondary_val"].append(compared_secondary_dict[key])
                         differences.append(index_dict)
