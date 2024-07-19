@@ -14,7 +14,7 @@ def logging_setup(log_level: int) -> logging.Logger:
     return log
 
 
-def test_valid_path(input_path: str) -> bool:
+def path_validator(input_path: str) -> bool:
     """Given input path, check if it exists."""
     valid_flag = False
     if os.path.exists(input_path):
@@ -27,7 +27,7 @@ def read_df_from_path(
 ) -> pd.DataFrame:
     """Given input file path, read file content and return data Pandas DataFrame."""
     output_data = pd.DataFrame()
-    if test_valid_path(input_path):
+    if path_validator(input_path):
         log.info(f"Path {input_path} available. Reading data file.")
         if input_format == "csv":
             output_data = pd.read_csv(input_path)
