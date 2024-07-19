@@ -3,7 +3,7 @@ import logging
 import pandas as pd
 from termcolor import colored
 from tabulate import tabulate
-from perpetuum_comparer.utils import read_df_from_path, logging_setup
+from perpetuum_comparer.utils import read_df_from_path, logging_setup, export_df_to_path
 from perpetuum_comparer.comparer import DataComparer
 
 parser = configargparse.ArgParser()
@@ -46,6 +46,14 @@ parser.add(
 )
 
 parser.add(
+    "-ep",
+    "--export_path",
+    required=False,
+    default=None,
+    help="Export test report to given path as CSV file",
+)
+
+parser.add(
     "-ll",
     "--log_level",
     required=False,
@@ -61,6 +69,7 @@ def main():
     test_name = args.test_name
     line_id = args.line_id
     log_level = args.log_level
+    export_path = args.export_path
     if args.show_details.upper() == "N":
         show_details = False
     else:
@@ -141,6 +150,11 @@ def main():
                     showindex="always",
                 )
             )
+
+            if export_path:
+                export_df_to_path(
+                    export_diffs, log, export_path=export_path, file_name=test_name
+                )
     else:
         if len(dc.structural_matches) == 0:
             print(
@@ -205,6 +219,11 @@ def main():
                         showindex="always",
                     )
                 )
+
+                if export_path:
+                    export_df_to_path(
+                        export_diffs, log, export_path=export_path, file_name=test_name
+                    )
 
 
 if __name__ == "__main__":

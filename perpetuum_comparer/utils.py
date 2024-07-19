@@ -1,6 +1,7 @@
 import logging
 import os
 import pandas as pd
+from datetime import datetime
 
 
 def logging_setup(log_level: int) -> logging.Logger:
@@ -39,3 +40,21 @@ def read_df_from_path(
             "Unable to read data. Invalid path provided. Returning empty DataFrame."
         )
     return output_data
+
+
+def export_df_to_path(
+    export_data: pd.DataFrame, log: logging.Logger, export_path: str, file_name: str
+) -> None:
+    """Given export file path and export data, save it to a local csv file."""
+    if not os.path.exists(export_path):
+        log.error("Provided path does not exist, stopping export !")
+        exit(1)
+    complete_export_file_name = (
+        f"{export_path}/{file_name}_{datetime.now():%Y%m%d%H%M%S}.csv"
+    )
+
+    try:
+        export_data.to_csv(complete_export_file_name, index=False, sep=",")
+        log.info(f"Exported data to : {complete_export_file_name} !")
+    except:
+        log.error("Exception encountered while exporting file !")
