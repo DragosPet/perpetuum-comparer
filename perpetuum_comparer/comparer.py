@@ -8,7 +8,7 @@ from tabulate import tabulate
 from termcolor import colored
 from perpetuum_comparer.utils import logging_setup
 
-log = logging_setup(logging.INFO)
+log = logging_setup(logging.ERROR)
 
 
 class DataComparer:
@@ -99,7 +99,7 @@ class DataComparer:
             )
         )
 
-    def content_comparison(self) -> None:
+    def content_comparison(self) -> list:
         log.info("Comparing data counts")
         primary_count = self.primary_df.shape[0]
         secondary_count = self.secondary_df.shape[0]
@@ -114,6 +114,10 @@ class DataComparer:
             # print(filter_cols)
             subset_primary_df = self.primary_df[filter_cols].fillna("")
             subset_secondary_df = self.secondary_df[filter_cols].fillna("")
+        else:
+            filter_cols = []
+            subset_primary_df = pd.DataFrame()
+            subset_secondary_df = pd.DataFrame()
 
         differences = []
         for index, rec in subset_primary_df.iterrows():
@@ -140,7 +144,7 @@ class DataComparer:
                 self.exclusive_secondary_indexes.append(ind)
         return differences
 
-    def generate_reports(self, differences_array: dict) -> "tuple[pd.DataFrame]":
+    def generate_reports(self, differences_array: dict) -> "tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]":
         reports = []
         export_reports = []
         if len(differences_array) > 0:
