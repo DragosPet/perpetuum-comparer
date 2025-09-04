@@ -104,10 +104,10 @@ class DataComparer:
         primary_count = self.primary_df.shape[0]
         secondary_count = self.secondary_df.shape[0]
         if primary_count == secondary_count:
-            print(f"Data counts matches between datasets : {primary_count} recs !")
+            print(f"Data counts matches between datasets ✅ : {primary_count} recs !")
         else:
             print(
-                f"Data counts different between datasets : PRIMARY : {primary_count} VS SECONDARY : {secondary_count} !"
+                f"Data counts different between datasets ❌ : PRIMARY : {primary_count} VS SECONDARY : {secondary_count} !"
             )
         if self.structural_matches:
             filter_cols = [x[0] for x in self.structural_matches]

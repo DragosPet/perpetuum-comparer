@@ -93,17 +93,17 @@ def main():
     structural_match = dc.structural_comparison()
     if structural_match:
         print(
-            f"The compared datasets are identical from a structural perspective ! - {colored('OK','green')}"
+            f"The compared datasets are identical from a structural perspective ! - {colored('OK','green')} ✅"
         )
 
         diffs = dc.content_comparison()
 
         if len(diffs) == 0 and len(dc.exclusive_primary_indexes) == 0:
             print(
-                f"No content differences between the compared datasets ! - {colored('OK','green')}"
+                f"No content differences between the compared datasets ! - {colored('OK','green')} ✅"
             )
         else:
-            print("There are differences in the content of the 2 dataframes.")
+            print("There are differences in the content of the 2 dataframes. ❌ ")
             (common_diffs, primary_exclusive, secondary_exclusive, export_diffs) = (
                 dc.generate_reports(diffs)
             )
@@ -118,7 +118,7 @@ def main():
             )
 
             print(
-                f"There is a {percentage_of_difference} % difference between the 2 files."
+                f"There is a {colored(round(percentage_of_difference,2), 'red')} % difference between the 2 files."
             )
 
             if not show_details:
@@ -132,24 +132,31 @@ def main():
                     showindex="always",
                 )
             )
-            print("Records that are only present in the Primary dataset : ")
-            print(
-                tabulate(
-                    primary_exclusive,
-                    headers=primary_exclusive.columns,
-                    tablefmt="grid",
-                    showindex="always",
+            if primary_exclusive.shape[0] > 0 :
+                print("Records that are only present in the Primary dataset : ")
+                print(
+                    tabulate(
+                        primary_exclusive,
+                        headers=primary_exclusive.columns,
+                        tablefmt="grid",
+                        showindex="always",
+                    )
                 )
-            )
-            print("Records that are only present in the Secondary dataset : ")
-            print(
-                tabulate(
-                    secondary_exclusive,
-                    headers=secondary_exclusive.columns,
-                    tablefmt="grid",
-                    showindex="always",
+            else:
+                print(f"No records that are only present in the Primary dataset. - {colored('OK','green')} ✅")
+
+            if secondary_exclusive.shape[0] > 0:
+                print("Records that are only present in the Secondary dataset : ")
+                print(
+                    tabulate(
+                        secondary_exclusive,
+                        headers=secondary_exclusive.columns,
+                        tablefmt="grid",
+                        showindex="always",
+                    )
                 )
-            )
+            else:
+                print(f"No records that are only present in the Secondary dataset. - {colored('OK','green')} ✅")
 
             if export_path:
                 export_df_to_path(
@@ -158,20 +165,20 @@ def main():
     else:
         if len(dc.structural_matches) == 0:
             print(
-                "There are no structural matches between the compared datasets. They are completely different."
+                "There are no structural matches between the compared datasets. They are completely different. ❌ "
             )
         else:
             print(
-                "There are structural differences between the compared datasets, but also common fields."
+                "There are structural differences between the compared datasets, but also common fields. ❌ "
             )
             dc.display_structural_comparison()
 
             diffs = dc.content_comparison()
 
             if len(diffs) == 0 and len(dc.exclusive_primary_indexes) == 0:
-                print("No content differences between the compared datasets.")
+                print("No content differences between the compared datasets. - {colored('OK','green')} ✅")
             else:
-                print("There are differences in the content of the 2 dataframes.")
+                print("There are differences in the content of the 2 dataframes. ❌ ")
                 (common_diffs, primary_exclusive, secondary_exclusive, export_diffs) = (
                     dc.generate_reports(diffs)
                 )
@@ -186,7 +193,7 @@ def main():
                 )
 
                 print(
-                    f"There is a {percentage_of_difference} % difference between the 2 files."
+                f"There is a {colored(round(percentage_of_difference,2), 'red')} % difference between the 2 files."
                 )
 
                 if not show_details:
@@ -201,24 +208,31 @@ def main():
                     )
                 )
 
-                print("Records that are only present in the Primary dataset : ")
-                print(
-                    tabulate(
-                        primary_exclusive,
-                        headers=primary_exclusive.columns,
-                        tablefmt="grid",
-                        showindex="always",
+                if primary_exclusive.shape[0] > 0 :
+                    print("Records that are only present in the Primary dataset : ")
+                    print(
+                        tabulate(
+                            primary_exclusive,
+                            headers=primary_exclusive.columns,
+                            tablefmt="grid",
+                            showindex="always",
+                        )
                     )
-                )
-                print("Records that are only present in the Secondary dataset : ")
-                print(
-                    tabulate(
-                        secondary_exclusive,
-                        headers=secondary_exclusive.columns,
-                        tablefmt="grid",
-                        showindex="always",
+                else:
+                    print(f"No records that are only present in the Primary dataset. - {colored('OK','green')} ✅")
+                
+                if secondary_exclusive.shape[0] > 0:
+                    print("Records that are only present in the Secondary dataset : ")
+                    print(
+                        tabulate(
+                            secondary_exclusive,
+                            headers=secondary_exclusive.columns,
+                            tablefmt="grid",
+                            showindex="always",
+                        )
                     )
-                )
+                else:
+                    print(f"No records that are only present in the Secondary dataset. - {colored('OK','green')} ✅")
 
                 if export_path:
                     export_df_to_path(
