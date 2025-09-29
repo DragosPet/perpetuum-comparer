@@ -3,6 +3,7 @@
 import logging
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 from datetime import datetime
 from tabulate import tabulate
 from termcolor import colored
@@ -120,7 +121,7 @@ class DataComparer:
             subset_secondary_df = pd.DataFrame()
 
         differences = []
-        for index, rec in subset_primary_df.iterrows():
+        for index, rec in tqdm(subset_primary_df.iterrows(),total=subset_primary_df.shape[0]):
             index_dict = {"index": index, "key_differences": [], "secondary_val": []}
             if rec[self.line_id] in subset_secondary_df[self.line_id].to_list():
                 compared_secondary_df = subset_secondary_df[
@@ -139,7 +140,7 @@ class DataComparer:
                 self.exclusive_primary_indexes.append(index)
 
         # get secondary df exclusive lines
-        for ind, x in subset_secondary_df.iterrows():
+        for ind, x in tqdm(subset_secondary_df.iterrows(), total=subset_secondary_df.shape[0]):
             if x[self.line_id] not in subset_primary_df[self.line_id].to_list():
                 self.exclusive_secondary_indexes.append(ind)
         return differences
@@ -157,10 +158,9 @@ class DataComparer:
                     orient="records"
                 )[0]
                 for diff in entry["key_differences"]:
-                    if index < 20:
-                        report_line[diff] = (
-                            f"{report_line[diff]}/{colored(entry['secondary_val'][0],'red')}"
-                        )
+                    report_line[diff] = (
+                        f"{report_line[diff]}/{colored(entry['secondary_val'][0],'red')}"
+                    )
                     export_line[diff] = (
                         f"{export_line[diff]}/{entry['secondary_val'][0]}"
                     )

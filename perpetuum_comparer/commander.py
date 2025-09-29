@@ -122,6 +122,10 @@ def main():
             )
 
             if not show_details:
+                if export_path:
+                    export_df_to_path(
+                        export_diffs, log, export_path=export_path, file_name=test_name
+                    )
                 return None
 
             print(
