@@ -130,3 +130,5 @@ dmypy.json
 
 
 # specific configs
+test_files/
+.vscode
