@@ -5,6 +5,7 @@ from termcolor import colored
 from tabulate import tabulate
 from perpetuum_comparer.utils import read_df_from_path, logging_setup, export_df_to_path
 from perpetuum_comparer.comparer import DataComparer
+from perpetuum_comparer.duck_comparer import DuckDataComparer
 
 parser = configargparse.ArgParser()
 
@@ -54,6 +55,14 @@ parser.add(
 )
 
 parser.add(
+    "-ce",
+    "--comparison_engine",
+    required=True,
+    default=None,
+    help="Comparison engine to use in process",
+)
+
+parser.add(
     "-ll",
     "--log_level",
     required=False,
@@ -70,6 +79,7 @@ def main():
     line_id = args.line_id
     log_level = args.log_level
     export_path = args.export_path
+    comparison_engine = args.comparison_engine
     if args.show_details.upper() == "N":
         show_details = False
     else:
@@ -85,9 +95,14 @@ def main():
     df_s = read_df_from_path(secondary_df_path, log=log, input_format="csv")
 
     # initialize data comparer
-    dc = DataComparer(
-        test_name=test_name, primary_df=df_p, secondary_df=df_s, line_id=line_id
-    )
+    if comparison_engine == 'sql':
+        dc = DuckDataComparer(
+            test_name=test_name, primary_df=df_p, secondary_df=df_s, line_id=line_id
+        )
+    else:
+        dc = DataComparer(
+            test_name=test_name, primary_df=df_p, secondary_df=df_s, line_id=line_id
+        )
 
     # run comparison logic
     structural_match = dc.structural_comparison()
