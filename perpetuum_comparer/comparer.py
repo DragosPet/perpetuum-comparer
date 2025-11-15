@@ -121,7 +121,7 @@ class DataComparer:
             subset_secondary_df = pd.DataFrame()
 
         differences = []
-        for index, rec in tqdm(subset_primary_df.iterrows(),total=subset_primary_df.shape[0]):
+        for index, rec in tqdm(subset_primary_df.head(1000).iterrows(),total=subset_primary_df.shape[0]):
             index_dict = {"index": index, "key_differences": [], "secondary_val": []}
             if rec[self.line_id] in subset_secondary_df[self.line_id].to_list():
                 compared_secondary_df = subset_secondary_df[

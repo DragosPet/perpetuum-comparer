@@ -126,14 +126,14 @@ class DuckDataComparer:
             SELECT * FROM subset_primary_df EXCEPT SELECT * FROM subset_secondary_df
         """).df()
         diffs_sp = duckdb.sql("""
-            SELECT * FROM subset_primary_df EXCEPT SELECT * FROM subset_secondary_df
+            SELECT * FROM subset_secondary_df EXCEPT SELECT * FROM subset_primary_df
         """).df()
         differences = []
 
         subset_primary_df_adj = subset_primary_df[subset_primary_df[self.line_id].isin(diffs_ps[self.line_id].unique())]
-        subset_secondary_df_adj = subset_secondary_df[subset_secondary_df[self.line_id].isin(diffs_ps[self.line_id].unique())]
+        subset_secondary_df_adj = subset_secondary_df[subset_secondary_df[self.line_id].isin(diffs_sp[self.line_id].unique())]
 
-        for index, rec in tqdm(subset_primary_df_adj.iterrows(),total=subset_primary_df_adj.shape[0]):
+        for index, rec in tqdm(subset_primary_df_adj.head(1000).iterrows(),total=subset_primary_df_adj.shape[0]):
             index_dict = {"index": index, "key_differences": [], "secondary_val": []}
             if rec[self.line_id] in subset_secondary_df[self.line_id].to_list():
                 compared_secondary_df = subset_secondary_df[
